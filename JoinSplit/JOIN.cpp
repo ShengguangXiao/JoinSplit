@@ -37,10 +37,8 @@ HISTORY:
 #include <io.h>
 #include <exception>
 
-//#define ZLIB_DLL	//@wineagle
-#define _WINDOWS
 #include "zlib.h"
-#include "JANDS.H"
+#include "DataStruct.h"
 
 #ifndef GZ_SUFFIX
 #  define GZ_SUFFIX ".gz"
@@ -92,7 +90,7 @@ int joinFiles_Ext1 (const char *sourceDir, const char *sourceName,const char *ex
 		sprintf (destName, ".\\%s%s", sourceName, extName);
 
 	// Open the join file...
-	if ((fileHdl = fopen (destName, "wb")) != NULL) //changed fopen() to fileopen()
+	if ((fileHdl = fopen (destName, "wb")) != NULL)
 	{
 		// ... and join in all the files.
 		writeHeader ( joinHdr, fileHdl);
@@ -117,16 +115,13 @@ int joinFiles_Ext1 (const char *sourceDir, const char *sourceName,const char *ex
 	}
     return errno;
 }
-//@4
-
-char *prog;
 
 /* ===========================================================================
  * Display error message and exit @2
  */
-void error( const char *msg )
+static void error( const char *msg )
 {
-    printf("%s: %s\n", prog, msg);
+    throw std::exception ( msg );
 }
 
 
@@ -201,13 +196,13 @@ short file_compress(const char *szDir, const char *szFileName,
     strcat (szSourceFile, szSrcExt);
     strcat (szGzipFile,   szZipExt);
 
-    in = fopen(szSourceFile, "rb"); // changed fopen() to fileopen()
+    in = fopen(szSourceFile, "rb");
     if (in == NULL) {
         perror(szSourceFile);
         return 1;
     }
     out = gzopen(szGzipFile, mode);
-    if (out == NULL) {        
+    if (out == NULL) {
         fclose(in);	//@4
         String msg = String ( "can't gzopen " ) + szGzipFile;
         throw std::exception( msg.c_str() );
@@ -273,7 +268,7 @@ static int genHeader (const char *pathName, const char *baseName,
 		do
         {
             // Don't include files with the same extension as the join file
-            if (_stricmp(joinFileName, fileinfo.name) != 0)
+            if (_stricmp(joinFileName, fileinfo.name) != 0 && fileinfo.size > 0 )
             {
                 // Copy the file information to the header
                 _snprintf (ptrHeader->fileName[ptrHeader->numFilesJoined],15,
@@ -345,8 +340,7 @@ static int writeHeader ( stJAndSHeader *ptrHeader, FILE *fileHdl)
 PURPOSE :
 HISTORY: @1
 */
-static long writeFile (const char *sourceDir, char *fileName,
-    long fileLen, FILE *fileHdl)
+static long writeFile (const char *sourceDir, char *fileName, long fileLen, FILE *fileHdl)
 {
     char
         *ptrBuf;
@@ -365,7 +359,7 @@ static long writeFile (const char *sourceDir, char *fileName,
             sprintf (sourceName, ".\\%s", fileName);
 
         // Copy the source file to memory
-        if ((sourceHdl = fopen (sourceName, "rb")) != NULL) //changed fopen() to fileopen()
+        if ( (sourceHdl = fopen ( sourceName, "rb" )) != NULL )
         {
             if (fread(ptrBuf, fileLen, 1, sourceHdl) != 1)
             {
@@ -386,9 +380,7 @@ static long writeFile (const char *sourceDir, char *fileName,
         ptrBuf = NULL;
     }
     else
-    {
 		throw std::exception ( "Insufficient memory" );
-    }
 
     return errno;
 }
@@ -397,15 +389,13 @@ static long writeFile (const char *sourceDir, char *fileName,
 PURPOSE :
 HISTORY: @1
 */
-static int concatFiles ( const char *sourceDir, stJAndSHeader *ptrHeader,
-    FILE *fileHdl)
+static int concatFiles ( const char *sourceDir, stJAndSHeader *ptrHeader, FILE *fileHdl)
 {
     // For each file in the header concat to the new join file
     for (int i = 0; i < ptrHeader->numFilesJoined; ++ i)
     {
         // Concat this file to the end of the current join file
-        if (writeFile (sourceDir, ptrHeader->fileName[i],
-            ptrHeader->fileLen[i], fileHdl) != 0)
+        if ( writeFile (sourceDir, ptrHeader->fileName[i], ptrHeader->fileLen[i], fileHdl) != 0 )
         {
             String msg = String ( "Failed to join in file %s" ) + ptrHeader->fileName[i];
 			throw std::exception ( msg.c_str() );
@@ -418,8 +408,7 @@ static int concatFiles ( const char *sourceDir, stJAndSHeader *ptrHeader,
 /* ========================================================================
 PURPOSE :
 */
-int joinFiles (const char *sourceDir, const char *sourceName,
-    const char *extName)
+int joinFiles (const char *sourceDir, const char *sourceName, const char *extName)
 {
     stJAndSHeader
         *joinHdr = NULL;
@@ -450,7 +439,7 @@ int joinFiles (const char *sourceDir, const char *sourceName,
                 sprintf (destName, ".\\%s%s", sourceName, extName);
 
             // Open the join file...
-            if ((fileHdl = fopen (destName, "wb")) != NULL) //changed fopen() to fileopen()
+            if ((fileHdl = fopen (destName, "wb")) != NULL)
             {
                 // ... and join in all the files.
                 writeHeader ( joinHdr, fileHdl);
@@ -465,8 +454,7 @@ int joinFiles (const char *sourceDir, const char *sourceName,
                 rename (destName, tempName);
 
                 // Compress the file @2
-                if ((nErr = file_compress (sourceDir, sourceName, ".CAT", extName,
-                    outmode)) != 0)
+                if ((nErr = file_compress (sourceDir, sourceName, ".CAT", extName, outmode)) != 0)
                 {                    
                     free(joinHdr);
                     String msg = String("Failed to compress ") + sourceName;
@@ -489,19 +477,15 @@ int joinFiles (const char *sourceDir, const char *sourceName,
     return errno;
 }
 
-//WXQ @3
-int joinDir (const char *sourceDir, const char *baseName,  const char *extName)
+int joinDir(const char *sourceDir, const char *extName)
 {
-    stJAndSHeader
-        *joinHdr = NULL;
-    FILE
-        *fileHdl = NULL;
+    stJAndSHeader *joinHdr = NULL;
+    FILE *fileHdl = NULL;
     char
         destName[_MAX_DIR],
         tempName[_MAX_DIR];
     char outmode[] = "wb6 ";
-    short
-        nErr;
+    short  nErr;
 
     // Clear any outstanding errors
     errno = EZERO;
@@ -510,18 +494,16 @@ int joinDir (const char *sourceDir, const char *baseName,  const char *extName)
     if ((joinHdr = (stJAndSHeader*)malloc(sizeof(stJAndSHeader))) != NULL)
     {
         // Populate the header with all the match files
-        if (genHeader (sourceDir, baseName, extName, joinHdr, 1)) //@3 directory
+        if (genHeader (sourceDir, "", extName, joinHdr, 1)) //@3 directory
         {
             // Clear any outstanding errors
             errno = EZERO;
+
             // Generate the destination name
-            if (strlen(sourceDir))
-                sprintf (destName, "%s\\%s%s", sourceDir, baseName, extName);
-            else
-                sprintf (destName, ".\\%s%s", baseName, extName);
+            sprintf (destName, "%s%s", sourceDir, extName);
 
             // Open the join file...
-            if ((fileHdl = fopen (destName, "wb")) != NULL) //changed fopen() to fileopen()
+            if ((fileHdl = fopen (destName, "wb")) != NULL)
             {
                 // ... and join in all the files.
                 writeHeader ( joinHdr, fileHdl);
@@ -529,18 +511,20 @@ int joinDir (const char *sourceDir, const char *baseName,  const char *extName)
                 fclose (fileHdl);
 
                 // Rename file as a temporary file
-                if (strlen(sourceDir))
-                    sprintf (tempName, "%s\\%s%s", sourceDir, baseName, ".CAT");
-                else
-                    sprintf (tempName, ".\\%s%s", baseName, ".CAT");
+                sprintf (tempName, "%s%s", sourceDir, ".CAT");
+
                 rename (destName, tempName);
 
+                String strDir(sourceDir);
+                size_t pos = strDir.find_last_of ( "\\" );
+                String strFolderName = strDir.substr ( pos + 1 );
+                String strParentDir = strDir.substr(0, pos);
+
                 // Compress the file @2
-                if ((nErr = file_compress (sourceDir, baseName, ".CAT", extName,
-                    outmode)) != 0)
+                if ( ( nErr = file_compress ( strParentDir.c_str(), strFolderName.c_str(), ".CAT", extName, outmode ) ) != 0 )
                 {                    
                     free(joinHdr);
-                    String msg = String("Failed to compress ") + baseName;
+                    String msg = String("Failed to compress ") + tempName;
                     throw std::exception ( msg.c_str() );
                     return nErr;
                 }

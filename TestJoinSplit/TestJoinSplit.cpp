@@ -2,10 +2,14 @@
 //
 
 #include "stdafx.h"
-#include "JANDS.H"
+#include "JoinSplit.h"
 
 void TestJoinFiles_1() {
-    joinFiles ( "D:\\Test\\CAD", "*", ".cmp" );
+    int nResult = 0;
+    nResult = joinDir ( "D:\\Test\\CAD", ".rcd" );
+
+    nResult = splitFiles ( "D:\\Test\\", "CAD", ".rcd", "D:\\Test\\CAD1\\" );
+    //joinFiles ( "D:\\Test\\CAD", "CAD", ".cmp" );
 }
 
 int _tmain(int argc, _TCHAR* argv[])
