@@ -8,7 +8,7 @@ void TestJoinFiles_1() {
     int nResult = 0;
     nResult = joinDir ( "D:\\Test\\CAD", ".rcd" );
 
-    nResult = splitFiles ( "D:\\Test\\", "CAD", ".rcd", "D:\\Test\\CAD1\\" );
+    nResult = splitFiles ( "D:\\Test\\", "CAD.rcd", "D:\\Test\\CAD1\\" );
     //joinFiles ( "D:\\Test\\CAD", "CAD", ".cmp" );
 }
 

@@ -18,6 +18,36 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="adler32.c" />
+    <ClCompile Include="compress.c" />
+    <ClCompile Include="crc32.c" />
+    <ClCompile Include="deflate.c" />
+    <ClCompile Include="gzclose.c" />
+    <ClCompile Include="gzlib.c" />
+    <ClCompile Include="gzread.c" />
+    <ClCompile Include="gzwrite.c" />
+    <ClCompile Include="infback.c" />
+    <ClCompile Include="inffast.c" />
+    <ClCompile Include="inflate.c" />
+    <ClCompile Include="inftrees.c" />
+    <ClCompile Include="trees.c" />
+    <ClCompile Include="uncompr.c" />
+    <ClCompile Include="zutil.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="crc32.h" />
+    <ClInclude Include="deflate.h" />
+    <ClInclude Include="gzguts.h" />
+    <ClInclude Include="inffast.h" />
+    <ClInclude Include="inffixed.h" />
+    <ClInclude Include="inflate.h" />
+    <ClInclude Include="inftrees.h" />
+    <ClInclude Include="trees.h" />
+    <ClInclude Include="zconf.h" />
+    <ClInclude Include="zlib.h" />
+    <ClInclude Include="zutil.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGUID>{CBD9195C-24A9-4367-A837-3EAC4DB9262E}</ProjectGUID>
     <Keyword>Win32Proj</Keyword>
@@ -64,7 +94,7 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">zlibd</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.lib</TargetExt>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">zlib.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">zlib</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">zlib</TargetName>
@@ -218,34 +248,6 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="zconf.h" />
-    <ClInclude Include=".\zlib\zlib.h" />
-    <ClInclude Include=".\zlib\crc32.h" />
-    <ClInclude Include=".\zlib\deflate.h" />
-    <ClInclude Include=".\zlib\gzguts.h" />
-    <ClInclude Include=".\zlib\inffast.h" />
-    <ClInclude Include=".\zlib\inffixed.h" />
-    <ClInclude Include=".\zlib\inflate.h" />
-    <ClInclude Include=".\zlib\inftrees.h" />
-    <ClInclude Include=".\zlib\trees.h" />
-    <ClInclude Include=".\zlib\zutil.h" />
-    <ClCompile Include=".\zlib\adler32.c" />
-    <ClCompile Include=".\zlib\compress.c" />
-    <ClCompile Include=".\zlib\crc32.c" />
-    <ClCompile Include=".\zlib\deflate.c" />
-    <ClCompile Include=".\zlib\gzclose.c" />
-    <ClCompile Include=".\zlib\gzlib.c" />
-    <ClCompile Include=".\zlib\gzread.c" />
-    <ClCompile Include=".\zlib\gzwrite.c" />
-    <ClCompile Include=".\zlib\inflate.c" />
-    <ClCompile Include=".\zlib\infback.c" />
-    <ClCompile Include=".\zlib\inftrees.c" />
-    <ClCompile Include=".\zlib\inffast.c" />
-    <ClCompile Include=".\zlib\trees.c" />
-    <ClCompile Include=".\zlib\uncompr.c" />
-    <ClCompile Include=".\zlib\zutil.c" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

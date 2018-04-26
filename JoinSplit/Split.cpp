@@ -247,7 +247,7 @@ static int extractFiles (char *destDir, stJAndSHeader *ptrHeader, FILE *fileHdl)
 /* ========================================================================
 PURPOSE :
 */
-int splitFiles (char *sourceDir, char *sourceName, char *extName, char *destDir)
+int splitFiles (char *sourceDir, char *sourceName, char *destDir)
 {
     stJAndSHeader
         *splitHdr = NULL;
@@ -263,12 +263,12 @@ int splitFiles (char *sourceDir, char *sourceName, char *extName, char *destDir)
     if (strlen(sourceDir))
     {
         sprintf (splitName, "%s%s%s", sourceDir, sourceName, ".CAT");
-        sprintf (zipName, "%s%s%s", sourceDir, sourceName, extName);
+        sprintf (zipName, "%s%s", sourceDir, sourceName);
     }
     else
     {
         sprintf (splitName, ".\\%s%s", sourceName, ".CAT");
-        sprintf (zipName, ".\\%s%s", sourceName, extName);
+        sprintf (zipName, ".\\%s", sourceName);
     }
     if ((nErr = file_uncompress(zipName, splitName)) != 0) // @1
     {
